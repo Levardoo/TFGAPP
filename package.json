@@ -1,0 +1,25 @@
+{
+  "name": "tfg-app-vcs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@digitalbazaar/ed25519-signature-2020": "^5.4.0",
+    "@digitalbazaar/ed25519-verification-key-2020": "^4.2.0",
+    "@digitalbazaar/vc": "^7.2.0",
+    "ejs": "^3.1.10",
+    "eth-sig-util": "^3.0.1",
+    "ethereumjs-util": "^7.1.5",
+    "express": "^5.1.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

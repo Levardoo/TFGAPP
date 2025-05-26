@@ -1,0 +1,179 @@
+<h1 id="title">APP GESTION EVENTOS CON VCs</h1>
+
+<h1>Crear Presentación</h1>
+
+<div id="vc-list"></div>
+
+<button id="createVP">Siguiente: elegir campos</button>
+
+<div id="field-selection" style="display:none;">
+  <h2>Selecciona campos a mantener</h2>
+  <form id="fieldsForm">
+    <div id="fieldsContainer"></div>
+    <button type="submit">Crear Presentación</button>
+  </form>
+</div>
+
+<script>
+const storedVCs = JSON.parse(localStorage.getItem('wallet') || '[]');
+const vcListDiv = document.getElementById('vc-list');
+const fieldSelectionDiv = document.getElementById('field-selection');
+const fieldsContainer = document.getElementById('fieldsContainer');
+
+if(storedVCs.length === 0) {
+  vcListDiv.innerText = "No tienes credenciales guardadas";
+} else {
+  storedVCs.forEach((vc, i) => {
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `vc-${i}`;
+    checkbox.value = i;
+
+    const label = document.createElement('label');
+    label.htmlFor = checkbox.id;
+    label.innerText = `Credencial ${i+1}: ${vc.id || 'sin id'}`;
+
+    const div = document.createElement('div');
+    div.appendChild(checkbox);
+    div.appendChild(label);
+
+    vcListDiv.appendChild(div);
+  });
+}
+
+document.getElementById('createVP').addEventListener('click', () => {
+  const selectedIndexes = Array.from(document.querySelectorAll('#vc-list input[type=checkbox]:checked')).map(cb => parseInt(cb.value));
+  const selectedVCs = selectedIndexes.map(i => storedVCs[i]);
+
+  if(selectedVCs.length === 0) {
+    alert("Selecciona al menos una credencial");
+    return;
+  }
+
+  // Ocultamos lista VC y botón, mostramos selección de campos
+  vcListDiv.style.display = 'none';
+  document.getElementById('createVP').style.display = 'none';
+  fieldSelectionDiv.style.display = 'block';
+
+  // Construimos el formulario de campos para cada VC
+  fieldsContainer.innerHTML = ''; // limpiar
+
+  selectedVCs.forEach((vc, idx) => {
+    const title = document.createElement('h3');
+    title.innerText = `Campos de Credencial ${idx+1}`;
+
+    // Suponemos que los campos están en vc.credentialSubject
+    const subject = vc.credentialSubject || {};
+
+    const vcDiv = document.createElement('div');
+    vcDiv.appendChild(title);
+
+    // Checkbox para cada campo de credentialSubject
+    Object.entries(subject).forEach(([key, value]) => {
+      if(key === 'evento' && typeof value === 'object' && value !== null) {
+        // Título para evento
+        const eventoTitle = document.createElement('strong');
+        eventoTitle.innerText = 'Evento:';
+        eventoTitle.style.display = 'block';
+        eventoTitle.style.marginTop = '8px';
+        vcDiv.appendChild(eventoTitle);
+
+        // Checkbox para cada campo dentro de evento
+        Object.entries(value).forEach(([eventKey, eventVal]) => {
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.name = `vc-${idx}-field-evento`;
+          checkbox.value = eventKey;
+          checkbox.checked = true;
+
+          const label = document.createElement('label');
+          label.innerText = `${eventKey}: ${eventVal}`;
+          label.style.marginLeft = '6px';
+
+          const fieldDiv = document.createElement('div');
+          fieldDiv.appendChild(checkbox);
+          fieldDiv.appendChild(label);
+
+          vcDiv.appendChild(fieldDiv);
+        });
+      } else {
+        // Campos normales
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = `vc-${idx}-field`;
+        checkbox.value = key;
+        checkbox.checked = true;
+
+        const label = document.createElement('label');
+        label.innerText = `${key}: ${value}`;
+        label.style.marginLeft = '6px';
+
+        const fieldDiv = document.createElement('div');
+        fieldDiv.appendChild(checkbox);
+        fieldDiv.appendChild(label);
+
+        vcDiv.appendChild(fieldDiv);
+      }
+    });
+
+    fieldsContainer.appendChild(vcDiv);
+  });
+
+  // Guardamos selectedVCs para uso posterior en el submit del form
+  fieldsContainer.dataset.selectedVCs = JSON.stringify(selectedVCs);
+});
+
+// Cuando envíen el formulario de campos seleccionados
+document.getElementById('fieldsForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const selectedVCs = JSON.parse(fieldsContainer.dataset.selectedVCs || '[]');
+
+  // Reconstruimos las VCs con solo campos seleccionados
+  const modifiedVCs = selectedVCs.map((vc, idx) => {
+    // Campos normales seleccionados
+    const checkedFields = Array.from(document.querySelectorAll(`input[name="vc-${idx}-field"]:checked`))
+                               .map(cb => cb.value);
+
+    // Campos evento seleccionados
+    const checkedEventoFields = Array.from(document.querySelectorAll(`input[name="vc-${idx}-field-evento"]:checked`))
+                                    .map(cb => cb.value);
+
+    const filteredCredentialSubject = {};
+
+    // Añadimos campos normales seleccionados
+    checkedFields.forEach(field => {
+      filteredCredentialSubject[field] = vc.credentialSubject[field];
+    });
+
+    // Si se seleccionó algún campo evento, reconstruimos el objeto evento
+    if(checkedEventoFields.length > 0 && vc.credentialSubject.evento) {
+      filteredCredentialSubject.evento = {};
+      checkedEventoFields.forEach(eventField => {
+        filteredCredentialSubject.evento[eventField] = vc.credentialSubject.evento[eventField];
+      });
+    }
+
+    // Retornamos nueva VC con credentialSubject filtrado
+    return {
+      ...vc,
+      credentialSubject: filteredCredentialSubject
+    };
+  });
+
+  // Enviar al backend
+  fetch('/presentation/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ selectedVCs: modifiedVCs })
+  })
+  .then(res => res.text())
+  .then(html => {
+    document.body.innerHTML = html;
+  })
+  .catch(err => {
+    alert("Error creando la presentación");
+    console.error(err);
+  });
+});
+</script>

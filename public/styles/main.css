@@ -1,0 +1,43 @@
+*{
+    background-color: aliceblue;
+    padding: 0px;
+}
+
+#evento{
+    display: block;
+    text-align: center;
+}
+
+#title{
+    text-align: center;
+    background-color: rgb(167, 206, 208);
+}
+
+.main-header {
+  background-color: #959595;
+  padding: 1em 2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 3px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2em;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  font-size: 1.1em;
+  transition: color 0.2s ease;
+}
+
+.nav-links li a:hover {
+  color: #00d0ff;
+}

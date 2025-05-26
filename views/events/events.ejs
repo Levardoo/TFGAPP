@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Eventos</title>
+</head>
+<body>
+  <h1 id="title">APP GESTION EVENTOS CON VCs</h1>
+
+  <h2>Lista de eventos</h2>
+  <ul>
+    <% events.forEach(evento => { %>
+      <li>
+        <strong><%= evento.name %></strong> - <%= evento.date%> - <%= evento.hour %> - <%= evento.site %> 
+        <a href="/events/<%=evento.id%>">
+          <button>Unirse</button>
+        </a>
+      </li>
+      <br>
+
+    <% }); %>
+  </ul>
+</body>
+</html>

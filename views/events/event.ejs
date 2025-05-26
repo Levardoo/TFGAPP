@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../public/styles/main.css">
+    <title>Evento - <%=evento.name%></title>
+</head>
+<body>
+    <h1 id="title">APP GESTION EVENTOS CON VCs</h1>
+    <header class="main-header">
+        <ul class="nav-links">
+            <li><a href="/events"><b>EVENTOS</b></a></li>
+            <li><a href="/wallet"><b>Mi Wallet</b></a></li>
+            <li><a href="/presentation"><b>Crear presentación (VP)</b></a></li>
+        </ul>
+    </header>
+    <div class="Evento">
+        <h1><%=evento.name%></h1>
+        <p>
+            <h2>Descripción del evento</h2>
+            <%= evento.description %>
+            <br>
+            <b>FECHA Y HORA: </b> <%= evento.date%> - <%= evento.hour %>
+            <br>
+            <b>Sitio</b>: <%= evento.site %>
+        </p>
+    </div>
+<div class="asistencia-form">
+  <h2>Formulario de inscripción</h2>
+  <form action="/events/<%= evento.id %>/generate" method="POST">
+    <label for="nombre">Nombre completo:</label><br>
+    <input type="text" id="nombre" name="nombre" required><br><br>
+
+    <label for="dni">DNI:</label><br>
+    <input type="text" id="dni" name="dni" required><br><br>
+
+    <label for="email">Correo electrónico:</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="telefono">Teléfono:</label><br>
+    <input type="tel" id="telefono" name="telefono"><br><br>
+
+    <label for="asistentes">Número de asistentes:</label><br>
+    <input type="number" id="asistentes" name="asistentes" value="1" min="1"><br><br>
+
+    <label for="fechaNacimiento">Fecha de fechaNacimiento</label><br>
+    <input type="date" id="fechaNacimiento" name="Fecha fechaNacimiento"><br><br>
+    <button type="button" id="generarVC">Generar VC</button>
+  </form>
+</div>
+</body>
+<script id="evento-data" type="application/json">
+  <%- JSON.stringify(evento) %>
+</script>
+<script src="/js/vcControler.js"></script>
+
+
+</html>
