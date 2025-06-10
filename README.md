@@ -56,9 +56,9 @@
 ## ▶️ Uso
 1. **Arrancar servidor**
    ```bash
-   npm install
+   npm run dev
 2. **Acceder a la app**
-Abre tu navegador en http://localhost:3000.
+Abre tu navegador en http://localhost:3001.
 
 
 ---
