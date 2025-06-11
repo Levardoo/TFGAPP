@@ -84,8 +84,8 @@ Abre tu navegador en http://localhost:3001.
 5. **GitHub Actions**: linting y formato (opcional)
 
 ## 🔗 Recursos útiles
-- [@digitalbazaar/vc – biblioteca JS de VCs]([https://enlace.com](https://github.com/digitalbazaar/vc))
-- [SD‑JWT VC DM – formato de Selective Disclosure] (https://github.com/danielfett/sd-jwt-vc-dm)
+- [@digitalbazaar/vc – biblioteca JS de VCs](https://enlace.com](https://github.com/digitalbazaar/vc))
+- [SD‑JWT VC DM – formato de Selective Disclosure](https://github.com/danielfett/sd-jwt-vc-dm)
 - [VC‑Data Model 2.0 – estándar W3C](https://www.w3.org/TR/vc-data-model-2.0/)
 
 
